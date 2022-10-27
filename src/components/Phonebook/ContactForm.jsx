@@ -32,7 +32,7 @@ export default function ContactForm({ onSubmit }) {
   };
 
   return (
-    <form action="" className={css.formFlex} onSubmit={handleSubmit}>
+    <form className={css.formFlex} onSubmit={handleSubmit}>
       <label htmlFor={nameInputId} className={css.labelText}>
         Name
       </label>
