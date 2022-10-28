@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeContact, filterContacts } from 'redux/contactsSlice';
+import { getContacts, getFilter } from 'redux/selectors';
+import { addContact } from 'redux/contactsSlice';
 import { nanoid } from 'nanoid';
 
 import ContactForm from './ContactForm';
@@ -9,29 +12,20 @@ import css from '../Phonebook/Phonebook.module.scss';
 import React from 'react';
 
 export default function Phonebook() {
-  const [contacts, setContacts] = useState(() => {
-    const value = JSON.parse(localStorage.getItem('contacts'));
-    return value ?? [];
-  });
-  const [filter, setFilter] = useState('');
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
 
-  const addConctact = data => {
+  const addConctacts = data => {
     if (noDuplicates(data)) {
       return alert(`${data.name} is already in contacts.`);
     }
-    setContacts(prevState => {
-      const newContact = { id: nanoid(), ...data };
-
-      return [...prevState, newContact];
-    });
+    dispatch(addContact({ id: nanoid(), ...data }));
   };
 
   const searchContact = e => {
     const { value } = e.target;
-    setFilter(value);
+    dispatch(filterContacts(value));
   };
 
   const filteredContacts = () => {
@@ -57,25 +51,22 @@ export default function Phonebook() {
     return result;
   };
 
-  const removeContact = id => {
-    setContacts(prevState => {
-      const newContacts = prevState.filter(item => item.id !== id);
-      return newContacts;
-    });
+  const deleteContact = id => {
+    dispatch(removeContact(id));
   };
 
   const filteredContactsList = filteredContacts();
   return (
     <>
       <div className={css.mainWrapper}>
-        <ContactForm onSubmit={addConctact} />
+        <ContactForm onSubmit={addConctacts} />
       </div>
       <div>
         <h2 className={css.title}>Contacts</h2>
         <Filter value={filter} onChange={searchContact}></Filter>
         <ContactList
           contacts={filteredContactsList}
-          removeContact={removeContact}
+          removeContact={deleteContact}
         />
       </div>
     </>
