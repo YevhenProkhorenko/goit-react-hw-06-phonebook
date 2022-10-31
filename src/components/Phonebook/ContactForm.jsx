@@ -1,11 +1,29 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { nanoid } from 'nanoid';
 import css from '../Phonebook/Phonebook.module.scss';
+import { useSelector, useDispatch } from 'react-redux';
+import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/contactsSlice';
 
-export default function ContactForm({ onSubmit }) {
+export default function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+
+  const noDuplicates = ({ name }) => {
+    const result = contacts.find(
+      item => item.name.toLowerCase() === name.toLowerCase()
+    );
+    return result;
+  };
+
+  const addConctacts = data => {
+    if (noDuplicates(data)) {
+      return alert(`${data.name} is already in contacts.`);
+    }
+    dispatch(addContact({ id: nanoid(), ...data }));
+  };
 
   const nameInputId = nanoid();
   const numberInputId = nanoid();
@@ -26,7 +44,7 @@ export default function ContactForm({ onSubmit }) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit({ name, number });
+    addConctacts({ name, number });
     setName('');
     setNumber('');
   };
@@ -69,7 +87,3 @@ export default function ContactForm({ onSubmit }) {
     </form>
   );
 }
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};

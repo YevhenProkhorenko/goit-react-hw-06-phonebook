@@ -1,8 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import css from '../Phonebook/Phonebook.module.scss';
+import { filterContacts } from 'redux/contactsSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { getFilter } from 'redux/selectors';
 
-export default function Filter({ value, onChange }) {
+export default function Filter() {
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
+
+  const searchContact = e => {
+    const { value } = e.target;
+    dispatch(filterContacts(value));
+  };
   return (
     <div>
       <label className={(css.labelText, css.formFlex)}>
@@ -11,18 +20,10 @@ export default function Filter({ value, onChange }) {
           className={css.inputStyles}
           type="text"
           name="filter"
-          value={value}
-          onChange={onChange}
+          value={filter}
+          onChange={searchContact}
         />
       </label>
     </div>
   );
 }
-
-Filter.defaultProps = {
-  filter: '',
-};
-Filter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
