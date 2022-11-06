@@ -22,7 +22,8 @@ export default function ContactForm() {
     if (noDuplicates(data)) {
       return alert(`${data.name} is already in contacts.`);
     }
-    dispatch(addContact({ id: nanoid(), ...data }));
+    dispatch(addContact({ id: nanoid(), ...data })) && setName('');
+    setNumber('');;
   };
 
   const nameInputId = nanoid();
@@ -45,8 +46,7 @@ export default function ContactForm() {
   const handleSubmit = e => {
     e.preventDefault();
     addConctacts({ name, number });
-    setName('');
-    setNumber('');
+    
   };
 
   return (
